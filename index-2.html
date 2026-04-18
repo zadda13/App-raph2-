@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#6C63FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>MonMot - Communication pour tous</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--P:#6C63FF;--PL:#9B95FF;--S:#FF6B9D;--A:#FFD93D;--G:#51CF66;--O:#FF922B;--B:#339AF0;--T:#20C997;--BG:#F0EEFF;--TX:#2D2D44;--TL:#6B6B8A;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito',sans-serif;background:var(--BG);color:var(--TX);min-height:100vh;overflow-x:hidden;user-select:none;}
+header{background:linear-gradient(135deg,var(--P),var(--PL));padding:10px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(108,99,255,.3);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Baloo 2',cursive;font-size:24px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;}
+.logo span{animation:bounce 2s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.hbtns{display:flex;gap:6px;align-items:center;}
+.hbtn{background:rgba(255,255,255,.2);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;color:#fff;transition:.2s;}
+.hbtn:active{transform:scale(.9);}
+.xpbadge{background:var(--A);color:var(--TX);border-radius:50px;padding:3px 9px;font-size:11px;font-weight:800;}
+.wave{display:none;align-items:center;gap:3px;}
+.wave.on{display:flex;}
+.wb{width:3px;background:var(--G);border-radius:2px;animation:wv .8s infinite ease-in-out;}
+.wb:nth-child(1){height:9px}.wb:nth-child(2){height:16px;animation-delay:.1s}.wb:nth-child(3){height:22px;animation-delay:.2s}.wb:nth-child(4){height:16px;animation-delay:.3s}.wb:nth-child(5){height:9px;animation-delay:.4s}
+@keyframes wv{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+#sbar{background:#fff;margin:8px 8px 0;border-radius:20px;padding:9px 12px;box-shadow:0 8px 32px rgba(108,99,255,.15);min-height:54px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;border:3px dashed transparent;}
+.sph{color:var(--TL);font-size:13px;font-weight:600;width:100%;text-align:center;pointer-events:none;}
+.sword{background:linear-gradient(135deg,var(--P),var(--PL));color:#fff;padding:5px 11px;border-radius:50px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:3px;animation:pop .3s cubic-bezier(.34,1.56,.64,1);cursor:pointer;}
+.sword:active{transform:scale(.9);}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.sact{display:flex;gap:7px;padding:6px 8px 3px;}
+.bspk{flex:1;background:linear-gradient(135deg,var(--G),#37B24D);color:#fff;border:none;border-radius:50px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 5px 18px rgba(81,207,102,.4);transition:.2s;}
+.bspk:active{transform:scale(.97);}
+.bclr{background:#FFE8EE;color:var(--S);border:none;border-radius:50px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:.2s;}
+.bclr:active{transform:scale(.97);}
+.tabs{display:flex;gap:5px;padding:3px 8px 5px;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{background:#fff;border:2px solid transparent;border-radius:50px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 7px rgba(0,0,0,.07);}
+.tab.active{background:var(--P);color:#fff;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 8px 88px;}
+@media(min-width:480px){.grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:768px){.grid{grid-template-columns:repeat(5,1fr)}}
+.pc{background:#fff;border-radius:20px;padding:11px 5px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.07);transition:.15s;border:3px solid transparent;position:relative;overflow:hidden;}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:4px 4px 0 0;}
+.pc[data-cat=besoin]::before{background:var(--S)}.pc[data-cat=action]::before{background:var(--G)}.pc[data-cat=objet]::before{background:var(--B)}.pc[data-cat=sentiment]::before{background:var(--A)}.pc[data-cat=personne]::before{background:var(--O)}.pc[data-cat=lieu]::before{background:var(--T)}.pc[data-cat=temps]::before{background:var(--PL)}.pc[data-cat=qualite]::before{background:#DA77F2}.pc[data-cat=nourriture]::before{background:#F06595}.pc[data-cat=animal]::before{background:#A9E34B}.pc[data-cat=corps]::before{background:#FFA94D}
+.pc:active{transform:scale(.92);border-color:var(--PL);}
+.pe{font-size:38px;line-height:1}.pl{font-size:11px;font-weight:800;text-align:center;line-height:1.2}.pp2{font-size:8px;font-weight:600;color:var(--TL);font-style:italic}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:2px solid #F0EEFF;box-shadow:0 -4px 20px rgba(108,99,255,.1);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:7px 2px 11px;cursor:pointer;border:none;background:none;font-family:'Nunito',sans-serif;}
+.ni .ic{font-size:20px;margin-bottom:1px}.ni .lb{font-size:8px;font-weight:700;color:var(--TL)}.ni.active .lb{color:var(--P)}
+#panPhrases,#panPhon,#panLearn,#panGestion{display:none;}
+#panPicto{display:block;}
+.ph{padding:5px 10px 2px;font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:var(--P);}
+.prc{background:#fff;border-radius:20px;margin:0 8px 8px;padding:11px 13px;box-shadow:0 3px 14px rgba(0,0,0,.07);cursor:pointer;display:flex;align-items:center;gap:9px;transition:.2s;border:2px solid transparent;}
+.prc:active{transform:scale(.98);border-color:var(--PL);}
+.pre{font-size:30px}.prt{flex:1;font-size:14px;font-weight:700;line-height:1.3}.prcat{font-size:10px;font-weight:700;color:var(--TL);background:var(--BG);padding:2px 6px;border-radius:50px;}
+.sm{background:linear-gradient(135deg,var(--G),#37B24D);color:#fff;border:none;border-radius:50px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;flex-shrink:0;transition:.2s;}
+.sm:active{transform:scale(.9);}
+.phg{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+@media(min-width:480px){.phg{grid-template-columns:repeat(6,1fr)}}
+.phc{background:linear-gradient(135deg,#F8F0FF,#EEE8FF);border-radius:12px;padding:11px 3px;text-align:center;cursor:pointer;transition:.2s;border:2px solid transparent;}
+.phc:active{transform:scale(.9);background:linear-gradient(135deg,var(--P),var(--PL));}
+.phs{font-size:18px;font-weight:900;color:var(--P);display:block}.phc:active .phs{color:#fff}
+.phe{font-size:8px;color:var(--TL);font-weight:700}.phc:active .phe{color:rgba(255,255,255,.8)}
+.st{font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;color:var(--TL);padding:7px 8px 2px;}
+.wb2{background:#fff;border-radius:20px;margin:0 8px 10px;padding:13px;box-shadow:0 8px 32px rgba(108,99,255,.15);}
+.sd{font-size:26px;font-weight:900;color:var(--P);text-align:center;min-height:42px;letter-spacing:3px;margin-bottom:9px;padding:5px;background:var(--BG);border-radius:12px;}
+.sbs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:7px;}
+.syb{background:var(--BG);border:2px solid transparent;border-radius:12px;padding:8px 2px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--P);cursor:pointer;transition:.15s;text-align:center;}
+.syb:active{background:var(--P);color:#fff;transform:scale(.92);}
+.wa{display:flex;gap:5px;}
+.bsm{flex:1;border:none;border-radius:50px;padding:8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:.2s;}
+.bsm.p{background:var(--P);color:#fff}.bsm.d{background:#FFE8EE;color:var(--S)}.bsm:active{transform:scale(.95)}
+.lhero{background:linear-gradient(135deg,#FF6B9D,#FF922B);margin:8px;border-radius:20px;padding:18px;color:#fff;text-align:center;box-shadow:0 8px 28px rgba(255,107,157,.3);}
+.lht{font-family:'Baloo 2',cursive;font-size:24px;font-weight:800;margin-bottom:3px;}
+.xpbw{background:rgba(255,255,255,.25);border-radius:50px;height:9px;margin-top:10px;overflow:hidden;}
+.xpbf{background:#fff;height:100%;border-radius:50px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 8px 8px;}
+.lcard{background:#fff;border-radius:20px;padding:14px 10px;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.08);transition:.2s;border:3px solid transparent;position:relative;}
+.lcard:active{transform:scale(.96)}.lcard.lck{opacity:.45;pointer-events:none;}
+.lcard.lck::after{content:"\uD83D\uDD12";position:absolute;top:7px;right:9px;font-size:15px;}
+.lcard.done{border-color:var(--G)}.lcard.done::after{content:"\u2705";position:absolute;top:7px;right:9px;font-size:15px;}
+.lic{font-size:36px;margin-bottom:5px}.lt{font-family:'Baloo 2',cursive;font-size:14px;font-weight:800}.ld{font-size:10px;color:var(--TL);font-weight:600;margin-top:2px}
+.lov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:flex-end;}
+.lov.on{display:flex;}
+.lsh{background:#fff;border-radius:28px 28px 0 0;width:100%;max-height:93vh;overflow-y:auto;animation:su .35s cubic-bezier(.34,1.56,.64,1);}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.lhdr{background:linear-gradient(135deg,var(--P),var(--PL));padding:14px 18px 12px;border-radius:28px 28px 0 0;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.lti{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;}
+.lcl{background:rgba(255,255,255,.2);border:none;border-radius:50%;width:34px;height:34px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.lprw{height:5px;background:#EEE;margin:0 18px;}
+.lprf{height:100%;background:linear-gradient(90deg,var(--G),var(--T));border-radius:50px;transition:width .4s;}
+.lbody{padding:14px 18px 22px;}
+.lq{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--TX);text-align:center;margin-bottom:13px;line-height:1.3;}
+.bem{font-size:72px;text-align:center;margin:8px 0;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+.lchs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;}
+.cb{background:var(--BG);border:3px solid transparent;border-radius:20px;padding:12px 6px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.ce{font-size:28px}.cb:active{transform:scale(.95)}
+.cb.ok{background:#D3F9D8;border-color:var(--G)}.cb.ko{background:#FFE3E3;border-color:#FF6B6B}
+.lfb{text-align:center;font-size:16px;font-weight:800;margin-top:12px;min-height:24px;}
+.lfb.ok{color:var(--G)}.lfb.ko{color:#FF6B6B}
+.lnx{width:100%;background:linear-gradient(135deg,var(--P),var(--PL));color:#fff;border:none;border-radius:50px;padding:13px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;margin-top:12px;display:none;}
+.lnx.on{display:block;}
+.lbtn{background:linear-gradient(135deg,var(--B),#1C7ED6);color:#fff;border:none;border-radius:50px;padding:13px 26px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;margin:0 auto 14px;box-shadow:0 5px 18px rgba(51,154,240,.4);}
+.lbtn:active{transform:scale(.96);}
+.bwp{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0;justify-content:center;}
+.pw{background:#fff;border:2px solid var(--PL);border-radius:50px;padding:7px 13px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;}
+.pw.used{opacity:.3;pointer-events:none;}
+.bans{min-height:44px;background:var(--BG);border-radius:12px;padding:7px 10px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:8px 0;border:2px dashed var(--PL);}
+.aw{background:var(--P);color:#fff;border-radius:50px;padding:5px 11px;font-size:13px;font-weight:700;cursor:pointer;}
+.rov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none;align-items:center;justify-content:center;}
+.rov.on{display:flex;}
+.rcard{background:#fff;border-radius:28px;padding:28px 22px;text-align:center;max-width:290px;width:90%;animation:pop .5s cubic-bezier(.34,1.56,.64,1);}
+.ric{font-size:64px;margin-bottom:8px}.rti{font-family:'Baloo 2',cursive;font-size:24px;font-weight:800;color:var(--P);margin-bottom:5px;}
+.rsc{font-size:15px;font-weight:700;color:var(--TL);margin-bottom:16px;}
+.rxp{background:linear-gradient(135deg,var(--A),var(--O));color:#fff;border-radius:50px;padding:7px 18px;font-size:15px;font-weight:800;display:inline-block;margin-bottom:14px;}
+.rbt{width:100%;background:linear-gradient(135deg,var(--P),var(--PL));color:#fff;border:none;border-radius:50px;padding:13px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;}
+.spkm{position:fixed;inset:0;background:rgba(108,99,255,.18);backdrop-filter:blur(6px);z-index:250;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.spkm.on{display:flex;}
+.cbb{background:#fff;border-radius:26px;padding:16px 22px;box-shadow:0 16px 56px rgba(108,99,255,.25);display:flex;flex-direction:column;align-items:center;gap:9px;max-width:290px;width:90%;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+.sbt{background:var(--P);color:#fff;border-radius:18px 18px 18px 3px;padding:8px 13px;font-size:14px;font-weight:800;text-align:center;max-width:250px;line-height:1.4;word-break:break-word;}
+.sdn{font-size:11px;font-weight:700;color:var(--TL);}
+.sdts{display:flex;gap:4px;justify-content:center;}
+.sdt{width:6px;height:6px;border-radius:50%;background:var(--PL);animation:dtP .6s infinite alternate ease-in-out;}
+.sdt:nth-child(2){animation-delay:.2s;background:var(--S)}.sdt:nth-child(3){animation-delay:.4s;background:var(--A)}
+@keyframes dtP{from{transform:scale(.6);opacity:.5}to{transform:scale(1.2);opacity:1}}
+#eyeL,#eyeR{animation:blink 3.5s infinite;}
+#eyeR{animation-delay:.08s}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.05)}}
+#cBody{animation:sway 1.8s infinite ease-in-out;transform-origin:80px 200px;}
+@keyframes sway{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}}
+#n1{animation:fn1 1.2s infinite alternate ease-in-out}#n2{animation:fn2 1.5s infinite alternate ease-in-out}#n3{animation:fn3 1s infinite alternate ease-in-out}
+@keyframes fn1{from{transform:translateY(0) rotate(-5deg);opacity:.9}to{transform:translateY(-8px) rotate(5deg);opacity:.4}}
+@keyframes fn2{from{transform:translateY(0) rotate(3deg);opacity:.8}to{transform:translateY(-10px) rotate(-8deg);opacity:.3}}
+@keyframes fn3{from{transform:translateY(0);opacity:.7}to{transform:translateY(-6px);opacity:.2}}
+.cft{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden;}
+.cfp{position:absolute;width:9px;height:9px;border-radius:2px;animation:cfF 1.5s forwards;}
+@keyframes cfF{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;}
+.mov.on{display:flex;}
+.msh{background:#fff;border-radius:28px 28px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto;animation:su .3s cubic-bezier(.34,1.56,.64,1);}
+.mhd{width:38px;height:4px;background:#E0E0E0;border-radius:2px;margin:0 auto 16px;}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #F0F0F0;}
+.sl{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.tgl{width:48px;height:25px;background:#E0E0E0;border-radius:13px;position:relative;cursor:pointer;transition:background .3s;border:none;}
+.tgl.on{background:var(--P)}.tgl::after{content:'';position:absolute;top:3px;left:3px;width:19px;height:19px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+.tgl.on::after{transform:translateX(23px)}
+.ri{width:100%;accent-color:var(--P);margin-top:5px;}
+.csel{background:var(--BG);border:2px solid transparent;border-radius:50px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;}
+.csel.on{background:var(--P);color:#fff;}.csel:active{transform:scale(.93);}
+.citem{background:#fff;border-radius:13px;padding:9px 11px;margin-bottom:6px;display:flex;align-items:center;gap:7px;box-shadow:0 2px 9px rgba(0,0,0,.06);}
+.cie{font-size:26px;flex-shrink:0}.cil{font-size:13px;font-weight:800}.cis{font-size:10px;color:var(--TL);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ias{display:flex;gap:5px;flex-shrink:0;}
+.bed{background:#EEF0FF;color:var(--P);border:none;border-radius:50%;width:30px;height:30px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.bed:active{transform:scale(.9);}
+.bdl{background:#FFE8EE;color:var(--S);border:none;border-radius:50%;width:30px;height:30px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.bdl:active{transform:scale(.9);}
+.fi{width:100%;padding:8px 10px;border:2px solid #E8E8F0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;outline:none;transition:border .2s;}
+.fi:focus{border-color:var(--P);}
+.epb{font-size:20px;background:none;border:none;cursor:pointer;padding:3px;border-radius:7px;transition:background .15s;line-height:1;}
+.epb:active{background:var(--PL);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span>&#x1F5E3;&#xFE0F;</span>MonMot</div>
+  <div class="hbtns">
+    <div class="wave" id="waveEl"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
+    <div class="xpbadge">&#x2B50; <span id="xpDisp">0</span></div>
+    <button class="hbtn" onclick="openSet()">&#x2699;&#xFE0F;</button>
+  </div>
+</header>
+
+<!-- BANNIERE ACTIVATION AUDIO -->
+<div id="audioBanner" onclick="unlockAudio();this.style.display='none'" style="background:linear-gradient(135deg,#FF922B,#FFD93D);padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 2px 10px rgba(255,146,43,.4);">
+  <span style="font-size:24px;">🔊</span>
+  <div>
+    <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:#2D2D44;">Appuie ici pour activer le son</div>
+    <div style="font-size:11px;font-weight:600;color:#5a4000;">Requis par le navigateur mobile</div>
+  </div>
+  <span style="margin-left:auto;font-size:20px;">👆</span>
+</div>
+<div id="sbar"><span class="sph" id="sph">Touche les images pour construire une phrase... &#x2728;</span></div>
+<div class="sact">
+  <button class="bspk" onclick="speakSent()">&#x1F50A; Dire la phrase</button>
+  <button class="bclr" onclick="clearSent()">&#x1F5D1;&#xFE0F;</button>
+</div>
+<div class="tabs" id="catTabs">
+  <button class="tab active" onclick="fCat('all',this)">&#x2728; Tout</button>
+  <button class="tab" onclick="fCat('besoin',this)">&#x2764;&#xFE0F; Besoins</button>
+  <button class="tab" onclick="fCat('action',this)">&#x26A1; Actions</button>
+  <button class="tab" onclick="fCat('objet',this)">&#x1F9F8; Objets</button>
+  <button class="tab" onclick="fCat('sentiment',this)">&#x1F60A; Emotions</button>
+  <button class="tab" onclick="fCat('personne',this)">&#x1F464; Personnes</button>
+  <button class="tab" onclick="fCat('lieu',this)">&#x1F3E0; Lieux</button>
+  <button class="tab" onclick="fCat('temps',this)">&#x23F0; Temps</button>
+  <button class="tab" onclick="fCat('qualite',this)">&#x1F308; Qualites</button>
+  <button class="tab" onclick="fCat('nourriture',this)">&#x1F34E; Nourriture</button>
+  <button class="tab" onclick="fCat('animal',this)">&#x1F981; Animaux</button>
+  <button class="tab" onclick="fCat('corps',this)">Corps</button>
+</div>
+<div id="panPicto"><div class="grid" id="pictoGrid"></div></div>
+<div id="panPhrases" style="padding-bottom:88px;"><div class="ph">&#x1F4AC; Phrases rapides</div><div id="phraseList"></div></div>
+<div id="panPhon">
+  <div class="ph">&#x1F3B5; Phonetique</div>
+  <div class="st">&#x1F9E9; Construire un mot</div>
+  <div class="wb2">
+    <div class="sd" id="sylDisp">_</div>
+    <div class="sbs">
+      <button class="syb" onclick="aS('a')">a</button><button class="syb" onclick="aS('e')">e</button><button class="syb" onclick="aS('i')">i</button><button class="syb" onclick="aS('o')">o</button><button class="syb" onclick="aS('u')">u</button>
+      <button class="syb" onclick="aS('ou')">ou</button><button class="syb" onclick="aS('in')">in</button><button class="syb" onclick="aS('an')">an</button><button class="syb" onclick="aS('on')">on</button><button class="syb" onclick="aS('un')">un</button>
+      <button class="syb" onclick="aS('b')">b</button><button class="syb" onclick="aS('d')">d</button><button class="syb" onclick="aS('f')">f</button><button class="syb" onclick="aS('j')">j</button><button class="syb" onclick="aS('l')">l</button>
+      <button class="syb" onclick="aS('m')">m</button><button class="syb" onclick="aS('n')">n</button><button class="syb" onclick="aS('p')">p</button><button class="syb" onclick="aS('r')">r</button><button class="syb" onclick="aS('s')">s</button>
+      <button class="syb" onclick="aS('t')">t</button><button class="syb" onclick="aS('v')">v</button><button class="syb" onclick="aS('ch')">ch</button><button class="syb" onclick="aS('tr')">tr</button><button class="syb" onclick="aS('pl')">pl</button>
+      <button class="syb" onclick="aS('br')">br</button><button class="syb" onclick="aS('gr')">gr</button><button class="syb" onclick="aS('cl')">cl</button><button class="syb" onclick="aS('pr')">pr</button><button class="syb" onclick="aS('fr')">fr</button>
+    </div>
+    <div class="wa">
+      <button class="bsm d" onclick="dS()">Eff.</button>
+      <button class="bsm p" onclick="spkW()">&#x1F50A; Dire</button>
+      <button class="bsm p" onclick="addW()">+ Phrase</button>
+    </div>
+  </div>
+  <div class="st">&#x1F524; Sons a apprendre</div>
+  <div style="background:#fff;border-radius:20px;margin:0 8px 88px;padding:12px;box-shadow:0 8px 32px rgba(108,99,255,.15);"><div class="phg" id="phonGrid"></div></div>
+</div>
+<div id="panLearn" style="padding-bottom:88px;">
+  <div class="lhero">
+    <div class="lht">&#x1F393; Apprentissage</div>
+    <div style="font-size:12px;font-weight:600;opacity:.9;">Apprends a communiquer en t'amusant !</div>
+    <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:11px;font-weight:700;">
+      <span>Niveau <span id="uLv">1</span> &middot; <span id="uXP">0</span> XP</span>
+      <span>Prochain : <span id="xpNxt">100</span> XP</span>
+    </div>
+    <div class="xpbw"><div class="xpbf" id="xpBar" style="width:0%"></div></div>
+  </div>
+  <div style="padding:0 8px 8px;font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;">&#x1F4DA; Lecons</div>
+  <div class="lgrid" id="lessonGrid"></div>
+</div>
+<div id="panGestion" style="padding-bottom:88px;">
+  <div class="ph">&#x270F;&#xFE0F; Gerer le contenu</div>
+  <div class="tabs" style="padding:0 8px 8px;">
+    <button class="tab active" id="gt1" onclick="sgTab('p',this)">&#x1F5BC;&#xFE0F; Pictogrammes</button>
+    <button class="tab" id="gt2" onclick="sgTab('f',this)">&#x1F4AC; Phrases</button>
+  </div>
+  <div id="gFormP">
+    <div style="background:#fff;border-radius:20px;margin:0 8px 10px;padding:13px;box-shadow:0 8px 32px rgba(108,99,255,.15);">
+      <div style="font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:var(--P);margin-bottom:9px;" id="pfTitle">+ Nouveau pictogramme</div>
+      <div style="margin-bottom:7px;">
+        <label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:3px;">Emoji</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <div id="epPrev" style="font-size:32px;width:48px;height:48px;background:var(--BG);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px dashed var(--PL);" onclick="tEP()">&#x1F60A;</div>
+          <div id="epPick" style="display:none;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto;background:var(--BG);border-radius:9px;padding:5px;flex:1;"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px;">
+        <div><label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:2px;">Label *</label><input class="fi" id="pLabel" type="text" placeholder="Calin"></div>
+        <div><label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:2px;">Phonetique</label><input class="fi" id="pPhone" type="text" placeholder="ca-lin"></div>
+      </div>
+      <div style="margin-bottom:7px;"><label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:2px;">Texte a prononcer</label><input class="fi" id="pSpeak" type="text" placeholder="Je veux un calin"></div>
+      <div style="margin-bottom:11px;">
+        <label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:4px;">Categorie</label>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;" id="catSel">
+          <button class="csel on" data-c="besoin" onclick="sCat(this)">Besoin</button>
+          <button class="csel" data-c="action" onclick="sCat(this)">Action</button>
+          <button class="csel" data-c="objet" onclick="sCat(this)">Objet</button>
+          <button class="csel" data-c="sentiment" onclick="sCat(this)">Emotion</button>
+          <button class="csel" data-c="nourriture" onclick="sCat(this)">Nourriture</button>
+          <button class="csel" data-c="animal" onclick="sCat(this)">Animal</button>
+          <button class="csel" data-c="corps" onclick="sCat(this)">Corps</button>
+          <button class="csel" data-c="lieu" onclick="sCat(this)">Lieu</button>
+          <button class="csel" data-c="temps" onclick="sCat(this)">Temps</button>
+          <button class="csel" data-c="qualite" onclick="sCat(this)">Qualite</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="svPicto()" style="flex:1;background:linear-gradient(135deg,var(--P),var(--PL));color:#fff;border:none;border-radius:50px;padding:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">Enregistrer</button>
+        <button onclick="cnclP()" id="cnclPBtn" style="display:none;background:#FFE8EE;color:var(--S);border:none;border-radius:50px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">X</button>
+      </div>
+    </div>
+    <div style="padding:0 8px;"><div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;color:var(--TL);margin-bottom:6px;">Mes pictogrammes</div><div id="cpList"></div></div>
+  </div>
+  <div id="gFormF" style="display:none;">
+    <div style="background:#fff;border-radius:20px;margin:0 8px 10px;padding:13px;box-shadow:0 8px 32px rgba(108,99,255,.15);">
+      <div style="font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:var(--P);margin-bottom:9px;" id="ffTitle">+ Nouvelle phrase</div>
+      <div style="margin-bottom:7px;">
+        <label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:3px;">Emoji</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <div id="fePrev" style="font-size:30px;width:44px;height:44px;background:var(--BG);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px dashed var(--PL);" onclick="tFEP()">&#x1F4AC;</div>
+          <div id="fePick" style="display:none;flex-wrap:wrap;gap:4px;max-height:90px;overflow-y:auto;background:var(--BG);border-radius:9px;padding:5px;flex:1;"></div>
+        </div>
+      </div>
+      <div style="margin-bottom:7px;"><label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:2px;">Phrase *</label><input class="fi" id="fText" type="text" placeholder="Je veux aller au parc"></div>
+      <div style="margin-bottom:11px;"><label style="font-size:11px;font-weight:700;color:var(--TL);display:block;margin-bottom:2px;">Categorie</label><input class="fi" id="fCat" type="text" placeholder="Loisir, Sante..."></div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="svPhrase()" style="flex:1;background:linear-gradient(135deg,var(--P),var(--PL));color:#fff;border:none;border-radius:50px;padding:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">Enregistrer</button>
+        <button onclick="cnclF()" id="cnclFBtn" style="display:none;background:#FFE8EE;color:var(--S);border:none;border-radius:50px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">X</button>
+      </div>
+    </div>
+    <div style="padding:0 8px;"><div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;color:var(--TL);margin-bottom:6px;">Mes phrases</div><div id="cfList"></div></div>
+  </div>
+</div>
+<nav>
+  <button class="ni active" id="nav-panPicto" onclick="showP('panPicto')"><span class="ic">&#x1F5BC;&#xFE0F;</span><span class="lb">Images</span></button>
+  <button class="ni" id="nav-panPhrases" onclick="showP('panPhrases')"><span class="ic">&#x1F4AC;</span><span class="lb">Phrases</span></button>
+  <button class="ni" id="nav-panPhon" onclick="showP('panPhon')"><span class="ic">&#x1F3B5;</span><span class="lb">Sons</span></button>
+  <button class="ni" id="nav-panLearn" onclick="showP('panLearn')"><span class="ic">&#x1F393;</span><span class="lb">Apprendre</span></button>
+  <button class="ni" id="nav-panGestion" onclick="showP('panGestion')"><span class="ic">&#x270F;&#xFE0F;</span><span class="lb">Gerer</span></button>
+</nav>
+<div class="lov" id="lessonOv">
+  <div class="lsh">
+    <div class="lhdr"><div class="lti" id="lTitle">Lecon</div><button class="lcl" onclick="closeLesson()">X</button></div>
+    <div style="padding:6px 18px 3px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:11px;font-weight:700;color:var(--TL);" id="lStepLbl">Q 1/5</span>
+      <span style="font-size:11px;font-weight:700;color:var(--G);" id="lScoreLbl">Score: 0</span>
+    </div>
+    <div class="lprw"><div class="lprf" id="lProg" style="width:0%"></div></div>
+    <div class="lbody" id="lBody"></div>
+  </div>
+</div>
+<div class="rov" id="resOv">
+  <div class="rcard">
+    <div class="ric" id="rIco">&#x1F389;</div>
+    <div class="rti" id="rTit">Bravo !</div>
+    <div class="rsc" id="rSc"></div>
+    <div class="rxp" id="rXP">+50 XP</div>
+    <button class="rbt" onclick="closeRes()">Continuer &#x27A4;</button>
+  </div>
+</div>
+<div class="spkm" id="spkModal" onclick="cSpk()">
+  <div class="cbb" onclick="event.stopPropagation()">
+    <svg id="cBody" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" width="140" height="158">
+      <ellipse cx="80" cy="196" rx="32" ry="5" fill="rgba(0,0,0,.08)"/>
+      <rect x="50" y="118" width="60" height="58" rx="14" fill="#E8834A"/>
+      <rect x="50" y="118" width="60" height="22" rx="14" fill="#6C63FF"/>
+      <rect x="50" y="130" width="60" height="6" fill="#FFD93D"/>
+      <rect x="50" y="136" width="60" height="4" fill="#6C63FF"/>
+      <rect x="28" y="120" width="24" height="12" rx="6" fill="#5C4033" transform="rotate(12 28 120)"/>
+      <circle cx="26" cy="135" r="8" fill="#E8834A"/>
+      <rect x="108" y="110" width="24" height="12" rx="6" fill="#5C4033" transform="rotate(-30 108 110)"/>
+      <circle cx="130" cy="100" r="8" fill="#E8834A"/>
+      <rect x="54" y="170" width="20" height="28" rx="8" fill="#5C4033"/>
+      <rect x="80" y="170" width="20" height="28" rx="8" fill="#5C4033"/>
+      <ellipse cx="64" cy="197" rx="13" ry="6" fill="#2D2D44"/>
+      <ellipse cx="90" cy="197" rx="13" ry="6" fill="#2D2D44"/>
+      <rect x="70" y="106" width="20" height="18" rx="6" fill="#C1692A"/>
+      <ellipse cx="80" cy="92" rx="34" ry="36" fill="#C1692A"/>
+      <ellipse cx="80" cy="60" rx="34" ry="16" fill="#2D1B0E"/>
+      <ellipse cx="55" cy="72" rx="12" ry="14" fill="#2D1B0E"/>
+      <ellipse cx="105" cy="72" rx="12" ry="14" fill="#2D1B0E"/>
+      <ellipse cx="80" cy="56" rx="28" ry="12" fill="#3D2710"/>
+      <ellipse cx="47" cy="94" rx="8" ry="10" fill="#C1692A"/>
+      <ellipse cx="113" cy="94" rx="8" ry="10" fill="#C1692A"/>
+      <ellipse cx="47" cy="94" rx="4" ry="6" fill="#A85520"/>
+      <ellipse cx="113" cy="94" rx="4" ry="6" fill="#A85520"/>
+      <ellipse cx="66" cy="90" rx="10" ry="11" fill="white"/>
+      <ellipse cx="94" cy="90" rx="10" ry="11" fill="white"/>
+      <circle id="eyeL" cx="67" cy="91" r="6" fill="#3D2000" transform-origin="67px 91px"/>
+      <circle id="eyeR" cx="93" cy="91" r="6" fill="#3D2000" transform-origin="93px 91px"/>
+      <circle cx="69" cy="88" r="2" fill="white"/>
+      <circle cx="95" cy="88" r="2" fill="white"/>
+      <ellipse cx="80" cy="102" rx="6" ry="4" fill="#A85520"/>
+      <ellipse cx="58" cy="104" rx="9" ry="6" fill="#E8834A" opacity=".5"/>
+      <ellipse cx="102" cy="104" rx="9" ry="6" fill="#E8834A" opacity=".5"/>
+      <path id="cMouth" d="M 62 114 Q 80 124 98 114" stroke="#7A3B10" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect id="cTeeth" x="66" y="114" width="28" height="7" rx="3" fill="white" opacity="0"/>
+      <path d="M 58 78 Q 66 74 74 78" stroke="#2D1B0E" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M 86 78 Q 94 74 102 78" stroke="#2D1B0E" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text id="n1" x="118" y="72" font-size="15" fill="#FFD93D">&#x266A;</text>
+      <text id="n2" x="128" y="52" font-size="12" fill="#FF6B9D">&#x266B;</text>
+      <text id="n3" x="105" y="42" font-size="9" fill="#51CF66">&#x266A;</text>
+    </svg>
+    <div class="sdts"><div class="sdt"></div><div class="sdt"></div><div class="sdt"></div></div>
+    <div class="sbt" id="spkTxt">...</div>
+    <div class="sdn">&#x2728; Kofi dit...</div>
+  </div>
+</div>
+<div class="mov" id="setModal" onclick="cSet(event)">
+  <div class="msh">
+    <div class="mhd"></div>
+    <div style="font-family:'Baloo 2',cursive;font-size:19px;font-weight:800;color:var(--P);margin-bottom:13px;">&#x2699;&#xFE0F; Parametres</div>
+    <div class="sr"><span class="sl">&#x1F50A; Synthese vocale</span><button class="tgl on" id="togSpk" onclick="this.classList.toggle('on')"></button></div>
+    <div class="sr"><span class="sl">&#x1F38A; Confettis</span><button class="tgl on" id="togCft" onclick="this.classList.toggle('on')"></button></div>
+    <div class="sr"><span class="sl">Vitesse de parole</span></div>
+    <input type="range" class="ri" id="rngSpd" min="0.5" max="1.5" step="0.1" value="0.8">
+    <div style="text-align:center;font-size:11px;color:var(--TL);font-weight:700;margin-bottom:9px;" id="lblSpd">0.8x</div>
+    <div class="sr"><span class="sl">Taille du texte</span></div>
+    <input type="range" class="ri" id="rngFnt" min="9" max="17" step="1" value="11">
+    <div style="text-align:center;font-size:11px;color:var(--TL);font-weight:700;" id="lblFnt">11px</div>
+    <div class="sr"><span class="sl">Reinitialiser progres</span><button onclick="resetProg()" style="background:#FFE8EE;color:var(--S);border:none;border-radius:50px;padding:6px 13px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;">Reset</button></div>
+    <button onclick="cSet()" style="width:100%;margin-top:16px;background:var(--P);color:#fff;border:none;border-radius:50px;padding:13px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">Fermer</button>
+  </div>
+</div>
+<div class="cft" id="cftCont"></div>
+<script>
+const PB=[
+{id:1,emoji:"\uD83C\uDF7D\uFE0F",label:"Manger",ph:"man-je",cat:"besoin",spk:"Je veux manger"},
+{id:2,emoji:"\uD83D\uDCA7",label:"Boire",ph:"bwa-r",cat:"besoin",spk:"Je veux boire"},
+{id:3,emoji:"\uD83D\uDEBD",label:"Toilettes",ph:"twa-let",cat:"besoin",spk:"Je dois aller aux toilettes"},
+{id:4,emoji:"\uD83D\uDE34",label:"Dormir",ph:"dor-mir",cat:"besoin",spk:"Je veux dormir"},
+{id:5,emoji:"\uD83C\uDE98",label:"Aide",ph:"e-d",cat:"besoin",spk:"J ai besoin d aide"},
+{id:6,emoji:"\uD83E\uDD12",label:"Douleur",ph:"dou-leur",cat:"besoin",spk:"J ai mal"},
+{id:7,emoji:"\uD83E\uDD17",label:"Calin",ph:"ca-lin",cat:"besoin",spk:"Je veux un calin"},
+{id:8,emoji:"\uD83C\uDFAE",label:"Jouer",ph:"jou-e",cat:"besoin",spk:"Je veux jouer"},
+{id:9,emoji:"\uD83E\uDDF9",label:"Propre",ph:"propr",cat:"besoin",spk:"Je veux etre propre"},
+{id:10,emoji:"\uD83D\uDC55",label:"S habiller",ph:"sa-bi-ye",cat:"besoin",spk:"Je veux m habiller"},
+{id:11,emoji:"\uD83E\uDEA5",label:"Se brosser",ph:"bro-se",cat:"besoin",spk:"Je veux me brosser les dents"},
+{id:12,emoji:"\uD83D\uDEC1",label:"Se laver",ph:"la-ve",cat:"besoin",spk:"Je veux me laver"},
+{id:13,emoji:"\uD83C\uDF6C",label:"Bonbon",ph:"bon-bon",cat:"besoin",spk:"Je veux un bonbon"},
+{id:14,emoji:"\uD83D\uDCFA",label:"Television",ph:"te-le",cat:"besoin",spk:"Je veux regarder la tele"},
+{id:15,emoji:"\uD83C\uDFB5",label:"Musique",ph:"mu-zik",cat:"besoin",spk:"Je veux ecouter de la musique"},
+{id:16,emoji:"\u270B",label:"Stop",ph:"stop",cat:"action",spk:"Stop"},
+{id:17,emoji:"\uD83D\uDC4D",label:"Oui",ph:"oui",cat:"action",spk:"Oui"},
+{id:18,emoji:"\uD83D\uDC4E",label:"Non",ph:"non",cat:"action",spk:"Non"},
+{id:19,emoji:"\uD83D\uDC4B",label:"Bonjour",ph:"bon-jour",cat:"action",spk:"Bonjour"},
+{id:20,emoji:"\uD83C\uDFC3",label:"Courir",ph:"cou-rir",cat:"action",spk:"courir"},
+{id:21,emoji:"\uD83D\uDC41\uFE0F",label:"Regarder",ph:"re-gar-de",cat:"action",spk:"regarder"},
+{id:22,emoji:"\uD83D\uDC42",label:"Ecouter",ph:"e-cou-te",cat:"action",spk:"ecouter"},
+{id:23,emoji:"\uD83E\uDD32",label:"Donner",ph:"do-ne",cat:"action",spk:"donner"},
+{id:24,emoji:"\uD83E\uDD1D",label:"Partager",ph:"par-ta-je",cat:"action",spk:"partager"},
+{id:25,emoji:"\uD83D\uDE4F",label:"Sil te plait",ph:"sil-te-ple",cat:"action",spk:"s il te plait"},
+{id:26,emoji:"\uD83D\uDE0A",label:"Merci",ph:"mer-si",cat:"action",spk:"merci"},
+{id:27,emoji:"\uD83D\uDEB6",label:"Marcher",ph:"mar-che",cat:"action",spk:"marcher"},
+{id:28,emoji:"\u270D\uFE0F",label:"Ecrire",ph:"e-krir",cat:"action",spk:"ecrire"},
+{id:29,emoji:"\uD83D\uDCD6",label:"Lire",ph:"lir",cat:"action",spk:"lire"},
+{id:30,emoji:"\uD83C\uDFA8",label:"Dessiner",ph:"de-si-ne",cat:"action",spk:"dessiner"},
+{id:31,emoji:"\uD83E\uDDF8",label:"Doudou",ph:"dou-dou",cat:"objet",spk:"doudou"},
+{id:32,emoji:"\uD83D\uDCF1",label:"Tablette",ph:"ta-blet",cat:"objet",spk:"tablette"},
+{id:33,emoji:"\uD83D\uDCDA",label:"Livre",ph:"li-vr",cat:"objet",spk:"livre"},
+{id:34,emoji:"\uD83D\uDE97",label:"Voiture",ph:"vwa-tur",cat:"objet",spk:"voiture"},
+{id:35,emoji:"\u26BD",label:"Ballon",ph:"ba-lon",cat:"objet",spk:"ballon"},
+{id:36,emoji:"\uD83E\uDDE9",label:"Puzzle",ph:"pu-zl",cat:"objet",spk:"puzzle"},
+{id:37,emoji:"\u270F\uFE0F",label:"Crayon",ph:"kre-yon",cat:"objet",spk:"crayon"},
+{id:38,emoji:"\uD83C\uDF81",label:"Cadeau",ph:"ka-do",cat:"objet",spk:"cadeau"},
+{id:39,emoji:"\uD83C\uDFC6",label:"Trophee",ph:"tro-fe",cat:"objet",spk:"trophee"},
+{id:40,emoji:"\uD83D\uDED4",label:"Trottinette",ph:"tro-ti-net",cat:"objet",spk:"trottinette"},
+{id:41,emoji:"\uD83C\uDF40",label:"Magie",ph:"ma-ji",cat:"objet",spk:"magie"},
+{id:42,emoji:"\uD83C\uDFA0",label:"Manege",ph:"ma-nej",cat:"objet",spk:"manege"},
+{id:43,emoji:"\uD83D\uDE0A",label:"Content",ph:"con-tan",cat:"sentiment",spk:"Je suis content"},
+{id:44,emoji:"\uD83D\uDE22",label:"Triste",ph:"trist",cat:"sentiment",spk:"Je suis triste"},
+{id:45,emoji:"\uD83D\uDE21",label:"En colere",ph:"an-co-ler",cat:"sentiment",spk:"Je suis en colere"},
+{id:46,emoji:"\uD83D\uDE28",label:"Peur",ph:"peur",cat:"sentiment",spk:"J ai peur"},
+{id:47,emoji:"\uD83D\uDE34",label:"Fatigue",ph:"fa-ti-gue",cat:"sentiment",spk:"Je suis fatigue"},
+{id:48,emoji:"\uD83E\uDD29",label:"Excite",ph:"ex-si-te",cat:"sentiment",spk:"Je suis excite"},
+{id:49,emoji:"\uD83D\uDE0C",label:"Calme",ph:"kalm",cat:"sentiment",spk:"Je suis calme"},
+{id:50,emoji:"\u2764\uFE0F",label:"Amour",ph:"a-mour",cat:"sentiment",spk:"Je t aime"},
+{id:51,emoji:"\uD83D\uDE2E",label:"Surpris",ph:"sur-pri",cat:"sentiment",spk:"Je suis surpris"},
+{id:52,emoji:"\uD83E\uDD22",label:"Malade",ph:"ma-lad",cat:"sentiment",spk:"Je suis malade"},
+{id:53,emoji:"\uD83D\uDE0E",label:"Fier",ph:"fier",cat:"sentiment",spk:"Je suis fier"},
+{id:54,emoji:"\uD83E\uDD71",label:"Ennuye",ph:"an-nui-e",cat:"sentiment",spk:"Je m ennuie"},
+{id:55,emoji:"\uD83D\uDC66",label:"Moi",ph:"mwa",cat:"personne",spk:"moi"},
+{id:56,emoji:"\uD83D\uDC69",label:"Maman",ph:"ma-man",cat:"personne",spk:"maman"},
+{id:57,emoji:"\uD83D\uDC68",label:"Papa",ph:"pa-pa",cat:"personne",spk:"papa"},
+{id:58,emoji:"\uD83D\uDC67",label:"Soeur",ph:"seur",cat:"personne",spk:"ma soeur"},
+{id:59,emoji:"\uD83D\uDC66",label:"Frere",ph:"frer",cat:"personne",spk:"mon frere"},
+{id:60,emoji:"\uD83D\uDC74",label:"Papy",ph:"pa-pi",cat:"personne",spk:"papy"},
+{id:61,emoji:"\uD83D\uDC75",label:"Mamie",ph:"ma-mi",cat:"personne",spk:"mamie"},
+{id:62,emoji:"\uD83E\uDDD1\u200D\u2695\uFE0F",label:"Docteur",ph:"dok-teur",cat:"personne",spk:"le docteur"},
+{id:63,emoji:"\uD83E\uDDD1\u200D\uD83C\uDFEB",label:"Maitre",ph:"metr",cat:"personne",spk:"le maitre"},
+{id:64,emoji:"\uD83D\uDC6B",label:"Ami",ph:"a-mi",cat:"personne",spk:"mon ami"},
+{id:65,emoji:"\uD83C\uDFE0",label:"Maison",ph:"mai-zon",cat:"lieu",spk:"a la maison"},
+{id:66,emoji:"\uD83C\uDFEB",label:"Ecole",ph:"e-kol",cat:"lieu",spk:"a l ecole"},
+{id:67,emoji:"\uD83C\uDFE5",label:"Hopital",ph:"o-pi-tal",cat:"lieu",spk:"a l hopital"},
+{id:68,emoji:"\uD83D\uDEC1",label:"Salle de bain",ph:"sal-de-bain",cat:"lieu",spk:"dans la salle de bain"},
+{id:69,emoji:"\uD83D\uDECF\uFE0F",label:"Chambre",ph:"chambr",cat:"lieu",spk:"dans ma chambre"},
+{id:70,emoji:"\uD83C\uDF33",label:"Dehors",ph:"de-or",cat:"lieu",spk:"dehors"},
+{id:71,emoji:"\uD83C\uDFEA",label:"Magasin",ph:"ma-ga-zin",cat:"lieu",spk:"au magasin"},
+{id:72,emoji:"\uD83C\uDF0A",label:"Piscine",ph:"pi-sin",cat:"lieu",spk:"a la piscine"},
+{id:73,emoji:"\uD83C\uDF3F",label:"Jardin",ph:"jar-din",cat:"lieu",spk:"dans le jardin"},
+{id:74,emoji:"\uD83C\uDFDE\uFE0F",label:"Parc",ph:"park",cat:"lieu",spk:"au parc"},
+{id:75,emoji:"\uD83C\uDF05",label:"Matin",ph:"ma-tin",cat:"temps",spk:"ce matin"},
+{id:76,emoji:"\u2600\uFE0F",label:"Aujourd hui",ph:"o-jour-dui",cat:"temps",spk:"aujourd hui"},
+{id:77,emoji:"\uD83C\uDF19",label:"Soir",ph:"swar",cat:"temps",spk:"ce soir"},
+{id:78,emoji:"\u23F0",label:"Maintenant",ph:"main-te-nan",cat:"temps",spk:"maintenant"},
+{id:79,emoji:"\uD83D\uDD1C",label:"Apres",ph:"a-pre",cat:"temps",spk:"apres"},
+{id:80,emoji:"\u2705",label:"Fini",ph:"fi-ni",cat:"temps",spk:"c est fini"},
+{id:81,emoji:"\u23F3",label:"Attendre",ph:"a-tandr",cat:"temps",spk:"attendre"},
+{id:82,emoji:"\uD83D\uDCC5",label:"Demain",ph:"de-main",cat:"temps",spk:"demain"},
+{id:83,emoji:"\uD83D\uDD50",label:"Bientot",ph:"bien-to",cat:"temps",spk:"bientot"},
+{id:84,emoji:"\uD83C\uDF03",label:"Nuit",ph:"nui",cat:"temps",spk:"la nuit"},
+{id:85,emoji:"\uD83D\uDD25",label:"Chaud",ph:"cho",cat:"qualite",spk:"chaud"},
+{id:86,emoji:"\u2744\uFE0F",label:"Froid",ph:"frwa",cat:"qualite",spk:"froid"},
+{id:87,emoji:"\uD83D\uDCE2",label:"Bruyant",ph:"brui-an",cat:"qualite",spk:"trop bruyant"},
+{id:88,emoji:"\uD83D\uDE0B",label:"Delicieux",ph:"de-li-sieu",cat:"qualite",spk:"delicieux"},
+{id:89,emoji:"\uD83D\uDCAA",label:"Fort",ph:"for",cat:"qualite",spk:"fort"},
+{id:90,emoji:"\uD83C\uDF38",label:"Joli",ph:"jo-li",cat:"qualite",spk:"joli"},
+{id:91,emoji:"\uD40C",label:"Lent",ph:"lan",cat:"qualite",spk:"lent"},
+{id:92,emoji:"\uD83D\uDE80",label:"Rapide",ph:"ra-pid",cat:"qualite",spk:"rapide"},
+{id:93,emoji:"\uD83D\uDD07",label:"Silence",ph:"si-lans",cat:"qualite",spk:"silence"},
+{id:94,emoji:"\uD83C\uDF1F",label:"Tres bien",ph:"tre-bien",cat:"qualite",spk:"tres bien"},
+{id:95,emoji:"\uD83C\uDF4E",label:"Pomme",ph:"pom",cat:"nourriture",spk:"pomme"},
+{id:96,emoji:"\uD83C\uDF4C",label:"Banane",ph:"ba-nan",cat:"nourriture",spk:"banane"},
+{id:97,emoji:"\uD83C\uDF4A",label:"Orange",ph:"o-ranj",cat:"nourriture",spk:"orange"},
+{id:98,emoji:"\uD83C\uDF53",label:"Fraise",ph:"frez",cat:"nourriture",spk:"fraise"},
+{id:99,emoji:"\uD83C\uDF47",label:"Raisin",ph:"re-zin",cat:"nourriture",spk:"raisin"},
+{id:100,emoji:"\uD83E\uDD55",label:"Carotte",ph:"ka-rot",cat:"nourriture",spk:"carotte"},
+{id:101,emoji:"\uD83C\uDF55",label:"Pizza",ph:"pit-za",cat:"nourriture",spk:"pizza"},
+{id:102,emoji:"\uD83C\uDF5E",label:"Pain",ph:"pain",cat:"nourriture",spk:"pain"},
+{id:103,emoji:"\uD83E\uDD5B",label:"Lait",ph:"le",cat:"nourriture",spk:"lait"},
+{id:104,emoji:"\uD83C\uDF6B",label:"Chocolat",ph:"cho-ko-la",cat:"nourriture",spk:"chocolat"},
+{id:105,emoji:"\uD83C\uDF66",label:"Glace",ph:"glas",cat:"nourriture",spk:"glace"},
+{id:106,emoji:"\uD83C\uDF6A",label:"Biscuit",ph:"bis-kwi",cat:"nourriture",spk:"biscuit"},
+{id:107,emoji:"\uD83E\uDD5A",label:"Oeuf",ph:"euf",cat:"nourriture",spk:"oeuf"},
+{id:108,emoji:"\uD83C\uDF5D",label:"Pates",ph:"pat",cat:"nourriture",spk:"pates"},
+{id:109,emoji:"\uD83E\uDD69",label:"Viande",ph:"vian-d",cat:"nourriture",spk:"viande"},
+{id:110,emoji:"\uD83C\uDF57",label:"Poulet",ph:"pou-le",cat:"nourriture",spk:"poulet"},
+{id:111,emoji:"\uD83E\uDD57",label:"Salade",ph:"sa-lad",cat:"nourriture",spk:"salade"},
+{id:112,emoji:"\uD83C\uDF70",label:"Gateau",ph:"ga-to",cat:"nourriture",spk:"gateau"},
+{id:113,emoji:"\uD83E\uDDE3",label:"Jus de fruit",ph:"ju",cat:"nourriture",spk:"jus de fruit"},
+{id:114,emoji:"\uD83E\uDD64",label:"Eau",ph:"o",cat:"nourriture",spk:"eau"},
+{id:115,emoji:"\uD83D\uDC36",label:"Chien",ph:"chien",cat:"animal",spk:"chien"},
+{id:116,emoji:"\uD83D\uDC31",label:"Chat",ph:"cha",cat:"animal",spk:"chat"},
+{id:117,emoji:"\uD83D\uDC30",label:"Lapin",ph:"la-pin",cat:"animal",spk:"lapin"},
+{id:118,emoji:"\uD83E\uDD81",label:"Lion",ph:"lion",cat:"animal",spk:"lion"},
+{id:119,emoji:"\uD83D\uDC18",label:"Elephant",ph:"e-le-fan",cat:"animal",spk:"elephant"},
+{id:120,emoji:"\uD83E\uDD8B",label:"Papillon",ph:"pa-pi-yon",cat:"animal",spk:"papillon"},
+{id:121,emoji:"\uD83D\uDC26",label:"Oiseau",ph:"wa-zo",cat:"animal",spk:"oiseau"},
+{id:122,emoji:"\uD83D\uDC20",label:"Poisson",ph:"pwa-son",cat:"animal",spk:"poisson"},
+{id:123,emoji:"\uD83D\uDC22",label:"Tortue",ph:"tor-tu",cat:"animal",spk:"tortue"},
+{id:124,emoji:"\uD83D\uDC38",label:"Grenouille",ph:"gre-nui",cat:"animal",spk:"grenouille"},
+{id:125,emoji:"\uD83E\uDD8A",label:"Renard",ph:"re-nar",cat:"animal",spk:"renard"},
+{id:126,emoji:"\uD83D\uDC3B",label:"Ours",ph:"ours",cat:"animal",spk:"ours"},
+{id:127,emoji:"\uD83D\uDC3C",label:"Panda",ph:"pan-da",cat:"animal",spk:"panda"},
+{id:128,emoji:"\uD83D\uDC27",label:"Pingouin",ph:"pin-gwin",cat:"animal",spk:"pingouin"},
+{id:129,emoji:"\uD83E\uDD92",label:"Girafe",ph:"ji-raf",cat:"animal",spk:"girafe"},
+{id:130,emoji:"\uD83E\uDD4A",label:"Mal a la tete",ph:"tet",cat:"corps",spk:"J ai mal a la tete"},
+{id:131,emoji:"\uD83D\uDC44",label:"Bouche",ph:"boush",cat:"corps",spk:"bouche"},
+{id:132,emoji:"\uD83D\uDC42",label:"Oreille",ph:"o-rey",cat:"corps",spk:"oreille"},
+{id:133,emoji:"\uD83D\uDC43",label:"Nez",ph:"ne",cat:"corps",spk:"nez"},
+{id:134,emoji:"\uD83D\uDC40",label:"Yeux",ph:"yeux",cat:"corps",spk:"yeux"},
+{id:135,emoji:"\uD83D\uDD90\uFE0F",label:"Main",ph:"main",cat:"corps",spk:"main"},
+{id:136,emoji:"\uD83E\uDDB5",label:"Jambe",ph:"jamb",cat:"corps",spk:"jambe"},
+{id:137,emoji:"\uD83E\uDDB6",label:"Pied",ph:"pie",cat:"corps",spk:"pied"},
+{id:138,emoji:"\uD3AB\uDEB4",label:"Coeur",ph:"keur",cat:"corps",spk:"coeur"},
+{id:139,emoji:"\uD83E\uDD38",label:"Corps",ph:"kor",cat:"corps",spk:"mon corps"},
+];
+const PH=[
+{emoji:"\uD83D\uDE4F",text:"S il te plait",cat:"Politesse"},
+{emoji:"\uD83D\uDE0A",text:"Merci beaucoup",cat:"Politesse"},
+{emoji:"\uD83D\uDC4B",text:"Au revoir",cat:"Politesse"},
+{emoji:"\uD83C\uDF4E",text:"Je veux une pomme",cat:"Nourriture"},
+{emoji:"\uD83E\uDD64",text:"J ai soif je veux boire",cat:"Nourriture"},
+{emoji:"\uD83C\uDF55",text:"Je veux de la pizza",cat:"Nourriture"},
+{emoji:"\uD83C\uDF6B",text:"Je veux du chocolat",cat:"Nourriture"},
+{emoji:"\uD83C\uDF21\uFE0F",text:"J ai mal au ventre",cat:"Sante"},
+{emoji:"\uD83E\uDD4A",text:"J ai mal a la tete",cat:"Sante"},
+{emoji:"\uD83D\uDE34",text:"Je suis fatigue",cat:"Sante"},
+{emoji:"\uD83E\uDD22",text:"Je ne me sens pas bien",cat:"Sante"},
+{emoji:"\uD83D\uDCFA",text:"Je veux regarder la tele",cat:"Loisir"},
+{emoji:"\uD83C\uDFAE",text:"Je veux jouer aux jeux",cat:"Loisir"},
+{emoji:"\uD83C\uDFB5",text:"Je veux ecouter de la musique",cat:"Loisir"},
+{emoji:"\uD83C\uDFA8",text:"Je veux dessiner",cat:"Loisir"},
+{emoji:"\uD83D\uDEC1",text:"Je veux prendre mon bain",cat:"Routine"},
+{emoji:"\uD83D\uDE34",text:"Je veux aller dormir",cat:"Routine"},
+{emoji:"\uD83E\uDEA5",text:"Je veux me brosser les dents",cat:"Routine"},
+{emoji:"\uD83C\uDFE0",text:"Je veux rentrer a la maison",cat:"Lieu"},
+{emoji:"\uD83C\uDF33",text:"Je veux aller dehors",cat:"Lieu"},
+{emoji:"\uD83C\uDF0A",text:"Je veux aller a la piscine",cat:"Lieu"},
+{emoji:"\uD83E\uDD17",text:"Je veux un calin",cat:"Emotion"},
+{emoji:"\uD83D\uDE21",text:"Je n aime pas ca",cat:"Emotion"},
+{emoji:"\uD83D\uDE0A",text:"Je suis content",cat:"Emotion"},
+{emoji:"\uD83D\uDE22",text:"Je suis triste",cat:"Emotion"},
+{emoji:"\uD83D\uDD07",text:"C est trop fort",cat:"Sensation"},
+{emoji:"\uD83D\uDCA1",text:"J ai besoin d aide",cat:"Besoin"},
+{emoji:"\uD83E\uDDF8",text:"Je veux mon doudou",cat:"Besoin"},
+{emoji:"\u23F3",text:"J attends s il te plait",cat:"Besoin"},
+{emoji:"\uD83D\uDC4D",text:"Oui je veux bien",cat:"Accord"},
+{emoji:"\uD83D\uDC4E",text:"Non merci",cat:"Accord"},
+];
+const PHONEMES=[
+{s:"A",e:"avion",w:"a comme avion"},{s:"E",e:"etoile",w:"e comme etoile"},
+{s:"I",e:"igloo",w:"i comme igloo"},{s:"O",e:"oiseau",w:"o comme oiseau"},
+{s:"U",e:"univers",w:"u comme univers"},{s:"OU",e:"ours",w:"ou comme ours"},
+{s:"AN",e:"ananas",w:"an comme ananas"},{s:"IN",e:"indien",w:"in comme indien"},
+{s:"ON",e:"oncle",w:"on comme oncle"},{s:"B",e:"bateau",w:"b comme bateau"},
+{s:"D",e:"doudou",w:"d comme doudou"},{s:"F",e:"fleur",w:"f comme fleur"},
+{s:"G",e:"gateau",w:"g comme gateau"},{s:"J",e:"jouet",w:"j comme jouet"},
+{s:"L",e:"lapin",w:"l comme lapin"},{s:"M",e:"maison",w:"m comme maison"},
+{s:"N",e:"noisette",w:"n comme noisette"},{s:"P",e:"papillon",w:"p comme papillon"},
+{s:"R",e:"robot",w:"r comme robot"},{s:"S",e:"soleil",w:"s comme soleil"},
+{s:"T",e:"table",w:"t comme table"},{s:"V",e:"velo",w:"v comme velo"},
+{s:"CH",e:"chat",w:"ch comme chat"},{s:"GN",e:"agneau",w:"gn comme agneau"},
+];
+const LESSONS=[
+{id:"l1",icon:"\uD83C\uDF4E",title:"Les aliments",desc:"Noms des aliments",xp:30,req:0,type:"id",pool:()=>PB.filter(p=>p.cat==="nourriture")},
+{id:"l2",icon:"\uD83D\uDE0A",title:"Les emotions",desc:"Reconnaitre les sentiments",xp:30,req:0,type:"id",pool:()=>PB.filter(p=>p.cat==="sentiment")},
+{id:"l3",icon:"\uD83D\uDC18",title:"Les animaux",desc:"Decouvrir les animaux",xp:30,req:0,type:"id",pool:()=>PB.filter(p=>p.cat==="animal")},
+{id:"l4",icon:"\uD83D\uDCAC",title:"Construire une phrase",desc:"Assembler les mots",xp:50,req:30,type:"build",
+sents:[
+{words:["Je","veux","manger"],ans:"Je veux manger"},
+{words:["Je","suis","content"],ans:"Je suis content"},
+{words:["Je","veux","jouer"],ans:"Je veux jouer"},
+{words:["Bonjour","maman"],ans:"Bonjour maman"},
+{words:["Je","veux","dormir"],ans:"Je veux dormir"},
+]},
+{id:"l5",icon:"\uD83C\uDFE0",title:"Les lieux",desc:"Reconnaitre les endroits",xp:30,req:60,type:"id",pool:()=>PB.filter(p=>p.cat==="lieu")},
+{id:"l6",icon:"\uD83C\uDFB5",title:"Les sons",desc:"Ecouter et reconnaitre",xp:40,req:90,type:"phon",pool:()=>PHONEMES.slice(0,12)},
+{id:"l7",icon:"\uD3AB\uDEB4",title:"Le corps",desc:"Parties du corps",xp:30,req:130,type:"id",pool:()=>PB.filter(p=>p.cat==="corps")},
+{id:"l8",icon:"\uD83D\uDDE3\uFE0F",title:"Phrases du quotidien",desc:"Memoriser les phrases",xp:60,req:160,type:"listen",pool:()=>PH.slice(0,10)},
+{id:"l9",icon:"\uD83D\uDC64",title:"Les personnes",desc:"Famille et entourage",xp:30,req:190,type:"id",pool:()=>PB.filter(p=>p.cat==="personne")},
+{id:"l10",icon:"\u23F0",title:"Le temps",desc:"Matin soir maintenant",xp:30,req:220,type:"id",pool:()=>PB.filter(p=>p.cat==="temps")},
+];
+let pictos=[...PB],phrases=[...PH];
+let sentence=[],bWord="";
+let rate=0.8,selEm="\uD83D\uDE0A",selFEm="\uD83D\uDCAC",selCat="besoin";
+let ePictoId=null,ePhrId=null;
+let uXP=+(localStorage.getItem("mm_xp")||0);
+let uLv=+(localStorage.getItem("mm_lv")||1);
+let done=JSON.parse(localStorage.getItem("mm_done")||"[]");
+let curL=null,lStep=0,lScore=0,lAns=false,bAns=[],curCat="all";
+let audioUnlocked=false, frVoice=null;
+
+// Charger la voix française dès que possible
+function loadFrVoice(){
+  if(!("speechSynthesis" in window)) return;
+  const tryLoad=()=>{
+    const voices=window.speechSynthesis.getVoices();
+    if(voices.length===0) return;
+    frVoice = voices.find(v=>v.lang==="fr-FR") ||
+              voices.find(v=>v.lang.startsWith("fr")) ||
+              voices[0];
+  };
+  tryLoad();
+  window.speechSynthesis.onvoiceschanged=tryLoad;
+}
+
+// Déverrouiller l'audio dès le premier toucher (obligatoire sur mobile)
+function unlockAudio(){
+  if(audioUnlocked) return;
+  if(!("speechSynthesis" in window)) return;
+  // Lancer un utterance vide silencieux pour débloquer
+  const silent=new SpeechSynthesisUtterance(" ");
+  silent.volume=0; silent.rate=10;
+  window.speechSynthesis.speak(silent);
+  audioUnlocked=true;
+  // Cacher la bannière d'activation si elle existe
+  const banner=document.getElementById("audioBanner");
+  if(banner) banner.style.display="none";
+}
+document.addEventListener("touchstart", unlockAudio, {once:true});
+document.addEventListener("click", unlockAudio, {once:true});
+
+function speak(txt,cb){
+  if(!document.getElementById("togSpk").classList.contains("on")){if(cb)cb();return;}
+  if(!("speechSynthesis" in window)){showToast("Synthese vocale non supportee");if(cb)cb();return;}
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang="fr-FR";
+  u.rate=rate;
+  u.pitch=1.1;
+  u.volume=1.0;
+  if(frVoice) u.voice=frVoice;
+  document.getElementById("spkTxt").textContent=txt;
+  document.getElementById("spkModal").classList.add("on");
+  const m=document.getElementById("cMouth"),t=document.getElementById("cTeeth");
+  let mo=false;
+  const mi=setInterval(()=>{mo=!mo;m.setAttribute("d",mo?"M 62 114 Q 80 132 98 114":"M 62 114 Q 80 124 98 114");t.setAttribute("opacity",mo?"1":"0");},180);
+  u.onstart=()=>{ document.getElementById("waveEl").classList.add("on"); };
+  u.onend=()=>{clearInterval(mi);m.setAttribute("d","M 62 114 Q 80 124 98 114");t.setAttribute("opacity","0");document.getElementById("waveEl").classList.remove("on");setTimeout(()=>document.getElementById("spkModal").classList.remove("on"),500);if(cb)cb();};
+  u.onerror=(e)=>{clearInterval(mi);document.getElementById("spkModal").classList.remove("on");document.getElementById("waveEl").classList.remove("on");if(cb)cb();};
+  // Securite : fermer si pas de onend apres 8s
+  setTimeout(()=>{if(document.getElementById("spkModal").classList.contains("on")){clearInterval(mi);document.getElementById("spkModal").classList.remove("on");document.getElementById("waveEl").classList.remove("on");if(cb)cb();}},8000);
+  window.speechSynthesis.speak(u);
+}
+function cSpk(){window.speechSynthesis.cancel();document.getElementById("spkModal").classList.remove("on");document.getElementById("waveEl").classList.remove("on");}
+function addWord(p){sentence.push(p);renderSent();speak(p.label);if(sentence.length===3)confetti();}
+function rmWord(i){sentence.splice(i,1);renderSent();}
+function renderSent(){
+  const b=document.getElementById("sbar"),ph=document.getElementById("sph");
+  b.innerHTML="";
+  if(!sentence.length){b.appendChild(ph);ph.style.display="block";return;}
+  sentence.forEach((w,i)=>{const el=document.createElement("div");el.className="sword";el.innerHTML="<span>"+w.emoji+"</span>"+w.label;el.onclick=()=>rmWord(i);b.appendChild(el);});
+}
+function speakSent(){
+  if(!sentence.length){speak("Touche les images pour creer une phrase");return;}
+  speak(sentence.map(w=>w.spk||w.label).join(", "),()=>{if(sentence.length)confetti();});
+}
+function clearSent(){sentence=[];renderSent();}
+function fCat(cat,btn){curCat=cat;document.querySelectorAll("#catTabs .tab").forEach(t=>t.classList.remove("active"));btn.classList.add("active");renderGrid();}
+function renderGrid(){
+  const g=document.getElementById("pictoGrid");g.innerHTML="";
+  (curCat==="all"?pictos:pictos.filter(p=>p.cat===curCat)).forEach(p=>{
+    const c=document.createElement("div");c.className="pc";c.setAttribute("data-cat",p.cat);
+    c.innerHTML="<div class=\"pe\">"+p.emoji+"</div><div class=\"pl\">"+p.label+"</div><div class=\"pp2\">"+(p.ph||"")+"</div>";
+    c.onclick=()=>addWord(p);g.appendChild(c);
+  });
+}
+function renderPhon(){
+  const g=document.getElementById("phonGrid");
+  PHONEMES.forEach(ph=>{const c=document.createElement("div");c.className="phc";c.innerHTML="<span class=\"phs\">"+ph.s+"</span><span class=\"phe\">"+ph.e+"</span>";c.onclick=()=>speak(ph.w);g.appendChild(c);});
+}
+function aS(s){bWord+=s;document.getElementById("sylDisp").textContent=bWord||"_";speak(s);}
+function dS(){if(bWord.length>0){bWord=bWord.slice(0,-1);document.getElementById("sylDisp").textContent=bWord||"_";}}
+function spkW(){if(bWord)speak(bWord);}
+function addW(){if(!bWord)return;addWord({emoji:"\uD83D\uDCDD",label:bWord,ph:bWord,cat:"objet",spk:bWord});bWord="";document.getElementById("sylDisp").textContent="_";showP("panPicto");}
+function renderPhrases(){
+  const list=document.getElementById("phraseList");list.innerHTML="";
+  phrases.forEach(ph=>{
+    const c=document.createElement("div");c.className="prc";
+    const st=JSON.stringify(ph.text);
+    c.innerHTML="<div class=\"pre\">"+ph.emoji+"</div><div><div class=\"prt\">"+ph.text+"</div><div class=\"prcat\">"+(ph.cat||"")+"</div></div><button class=\"sm\" onclick=\"event.stopPropagation();speak("+st+")\">&#x1F50A;</button>";
+    c.onclick=()=>{const lbl=ph.text.length>20?ph.text.substring(0,20)+"...":ph.text;sentence=[{emoji:ph.emoji,label:lbl,spk:ph.text}];renderSent();speak(ph.text);showP("panPicto");};
+    list.appendChild(c);
+  });
+}
+function showP(name){
+  ["panPicto","panPhrases","panPhon","panLearn","panGestion"].forEach(p=>{document.getElementById(p).style.display="none";document.getElementById("nav-"+p).classList.remove("active");});
+  document.getElementById(name).style.display="block";
+  document.getElementById("nav-"+name).classList.add("active");
+  document.getElementById("catTabs").style.display=name==="panPicto"?"flex":"none";
+  document.getElementById("sbar").style.display=name==="panLearn"?"none":"flex";
+  document.querySelector(".sact").style.display=name==="panLearn"?"none":"flex";
+  if(name==="panGestion")renderCLists();
+  if(name==="panLearn"){renderLessons();updXP();}
+}
+function updXP(){
+  document.getElementById("xpDisp").textContent=uXP;document.getElementById("uXP").textContent=uXP;document.getElementById("uLv").textContent=uLv;
+  const nxt=uLv*100,prv=(uLv-1)*100,pct=Math.min(100,((uXP-prv)/(nxt-prv))*100);
+  document.getElementById("xpBar").style.width=pct+"%";document.getElementById("xpNxt").textContent=nxt;
+}
+function saveProg(){localStorage.setItem("mm_xp",uXP);localStorage.setItem("mm_lv",uLv);localStorage.setItem("mm_done",JSON.stringify(done));}
+function resetProg(){if(!confirm("Reinitialiser les progres ?"))return;uXP=0;uLv=1;done=[];saveProg();updXP();renderLessons();showToast("Reinitialise");cSet();}
+function renderLessons(){
+  const g=document.getElementById("lessonGrid");g.innerHTML="";
+  LESSONS.forEach(l=>{
+    const ok=uXP>=l.req,fin=done.includes(l.id);
+    const c=document.createElement("div");c.className="lcard"+(fin?" done":"")+(ok?"":(" lck"));
+    c.innerHTML="<div class=\"lic\">"+l.icon+"</div><div class=\"lt\">"+l.title+"</div><div class=\"ld\">"+l.desc+"</div><div style=\"font-size:10px;color:var(--TL);margin-top:3px;font-weight:700;\">+"+l.xp+" XP"+(l.req>0?" (requis: "+l.req+" XP)":"")+"</div><div style=\"font-size:14px;margin-top:3px;\">"+(fin?"\u2B50\u2B50\u2B50":(ok?"\u2606\u2606\u2606":"\uD83D\uDD12"))+"</div>";
+    if(ok)c.onclick=()=>startLesson(l);
+    g.appendChild(c);
+  });
+}
+function startLesson(l){curL=l;lStep=0;lScore=0;lAns=false;document.getElementById("lTitle").textContent=l.icon+" "+l.title;document.getElementById("lessonOv").classList.add("on");renderStep();}
+function closeLesson(){document.getElementById("lessonOv").classList.remove("on");curL=null;}
+function renderStep(){
+  const l=curL,total=l.type==="build"?l.sents.length:5;
+  document.getElementById("lStepLbl").textContent="Q "+(lStep+1)+"/"+total;
+  document.getElementById("lScoreLbl").textContent="Score: "+lScore;
+  document.getElementById("lProg").style.width=((lStep/total)*100)+"%";
+  lAns=false;const body=document.getElementById("lBody");body.innerHTML="";
+  if(l.type==="id")stepId(l,body,total);
+  else if(l.type==="build")stepBuild(l,body,total);
+  else if(l.type==="phon")stepPhon(l,body,total);
+  else if(l.type==="listen")stepListen(l,body,total);
+}
+function stepId(l,body,total){
+  const items=shuf(l.pool()),correct=items[lStep%items.length];
+  const wrong=shuf(items.filter(i=>i.id!==correct.id)).slice(0,3),choices=shuf([correct,...wrong]);
+  body.innerHTML="<div class=\"lq\">Quel est ce pictogramme ?</div><div class=\"bem\">"+correct.emoji+"</div><button class=\"lbtn\" onclick=\"speak("+JSON.stringify(correct.label)+")\" >&#x1F50A; Ecouter</button><div class=\"lchs\" id=\"lChs\"></div><div class=\"lfb\" id=\"lFb\"></div><button class=\"lnx\" id=\"lNx\" onclick=\"nextStep("+total+")\">Suivant &#x27A4;</button>";
+  const cc=document.getElementById("lChs");
+  choices.forEach(c=>{const btn=document.createElement("button");btn.className="cb";btn.innerHTML="<span class=\"ce\">"+c.emoji+"</span>"+c.label;btn.onclick=()=>checkId(btn,c.id===correct.id,correct.label);cc.appendChild(btn);});
+}
+function stepBuild(l,body,total){
+  const sent=l.sents[lStep];bAns=[];
+  body.innerHTML="<div class=\"lq\">Construis la phrase :<br><em style=\"color:var(--P)\">&ldquo;"+sent.ans+"&rdquo;</em></div><div class=\"bans\" id=\"bAns\"><span style=\"color:var(--TL);font-size:12px;\">Appuie sur les mots &#x2193;</span></div><div class=\"bwp\" id=\"bPool\"></div><div class=\"lfb\" id=\"lFb\"></div><button class=\"lnx\" id=\"lNx\" onclick=\"nextStep("+total+")\">Suivant &#x27A4;</button><button onclick=\"checkBuild("+JSON.stringify(sent.ans)+","+total+")\" style=\"width:100%;background:linear-gradient(135deg,var(--B),#1C7ED6);color:#fff;border:none;border-radius:50px;padding:12px;font-family:Nunito,sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-top:9px;\" id=\"chkBtn\">&#x2713; Verifier</button>";
+  const pool=document.getElementById("bPool");
+  shuf([...sent.words]).forEach(w=>{
+    const btn=document.createElement("button");btn.className="pw";btn.textContent=w;
+    btn.onclick=()=>{if(btn.classList.contains("used"))return;btn.classList.add("used");bAns.push({w,btn});const ans=document.getElementById("bAns");if(bAns.length===1)ans.innerHTML="";const tag=document.createElement("div");tag.className="aw";tag.textContent=w;tag.onclick=()=>{tag.remove();btn.classList.remove("used");bAns=bAns.filter(x=>x.btn!==btn);};ans.appendChild(tag);};
+    pool.appendChild(btn);
+  });
+}
+function checkBuild(ans,total){
+  if(!bAns.length){showToast("Appuie sur les mots !");return;}
+  const built=bAns.map(x=>x.w).join(" ");
+  const ok=built.toLowerCase()===ans.toLowerCase();
+  document.getElementById("lFb").textContent=ok?"Parfait !":"Essaie encore...";
+  document.getElementById("lFb").className="lfb "+(ok?"ok":"ko");
+  document.getElementById("chkBtn").style.display="none";
+  if(ok){lScore++;confetti();}
+  document.getElementById("lNx").classList.add("on");lAns=true;
+}
+function stepPhon(l,body,total){
+  const items=l.pool(),item=items[lStep%items.length];
+  const wrong=shuf(items.filter(i=>i.s!==item.s)).slice(0,3),choices=shuf([item,...wrong]);
+  body.innerHTML="<div class=\"lq\">Ecoute et trouve le son !</div><button class=\"lbtn\" onclick=\"speak("+JSON.stringify(item.w)+")\" >&#x1F50A; Ecouter</button><div class=\"lchs\" id=\"lChs\"></div><div class=\"lfb\" id=\"lFb\"></div><button class=\"lnx\" id=\"lNx\" onclick=\"nextStep("+total+")\">Suivant &#x27A4;</button>";
+  const cc=document.getElementById("lChs");
+  choices.forEach(c=>{const btn=document.createElement("button");btn.className="cb";btn.innerHTML="<span style=\"font-size:26px;font-weight:900;color:var(--P)\">"+c.s+"</span><span style=\"font-size:11px\">"+c.e+"</span>";btn.onclick=()=>checkId(btn,c.s===item.s,item.s);cc.appendChild(btn);});
+  setTimeout(()=>speak(item.w),500);
+}
+function stepListen(l,body,total){
+  const items=l.pool(),item=items[lStep%items.length];
+  body.innerHTML="<div class=\"lq\">Memorise cette phrase !</div><div style=\"font-size:44px;text-align:center;margin:8px 0;\">"+item.emoji+"</div><div style=\"background:var(--BG);border-radius:14px;padding:14px;text-align:center;margin-bottom:12px;\"><div style=\"font-size:16px;font-weight:800;\">"+item.text+"</div><div style=\"font-size:11px;color:var(--TL);margin-top:3px;\">"+(item.cat||"")+"</div></div><button class=\"lbtn\" onclick=\"speak("+JSON.stringify(item.text)+")\" >&#x1F50A; Repeter</button><button class=\"lnx on\" id=\"lNx\" onclick=\"listenNext("+total+")\">J ai appris ! &#x27A4;</button>";
+  setTimeout(()=>speak(item.text),300);
+}
+function listenNext(total){lScore++;nextStep(total);}
+function checkId(btn,ok,label){
+  if(lAns)return;lAns=true;btn.classList.add(ok?"ok":"ko");
+  document.getElementById("lFb").textContent=ok?"Bravo !":"C etait : "+label;
+  document.getElementById("lFb").className="lfb "+(ok?"ok":"ko");
+  if(ok){lScore++;speak(label);confetti();}
+  document.getElementById("lNx").classList.add("on");
+}
+function nextStep(total){lStep++;if(lStep>=total)endLesson(total);else renderStep();}
+function endLesson(total){
+  const l=curL;closeLesson();
+  const perfect=lScore===total,xp=perfect?l.xp:Math.floor(l.xp*lScore/total);
+  uXP+=xp;while(uXP>=uLv*100)uLv++;
+  if(!done.includes(l.id))done.push(l.id);
+  saveProg();updXP();renderLessons();
+  document.getElementById("rIco").textContent=perfect?"\uD83C\uDFC6":"\uD83C\uDF89";
+  document.getElementById("rTit").textContent=perfect?"Parfait !":"Bravo !";
+  document.getElementById("rSc").textContent=lScore+" / "+total+" bonnes reponses";
+  document.getElementById("rXP").textContent="+"+xp+" XP";
+  document.getElementById("resOv").classList.add("on");confetti();
+}
+function closeRes(){document.getElementById("resOv").classList.remove("on");}
+function shuf(a){return[...a].sort(()=>Math.random()-.5);}
+function confetti(){
+  if(!document.getElementById("togCft").classList.contains("on"))return;
+  const ct=document.getElementById("cftCont");
+  ["#6C63FF","#FF6B9D","#FFD93D","#51CF66","#339AF0","#FF922B"].forEach(col=>{
+    for(let i=0;i<4;i++){const p=document.createElement("div");p.className="cfp";p.style.cssText="left:"+Math.random()*100+"%;top:-18px;background:"+col+";width:"+(5+Math.random()*7)+"px;height:"+(5+Math.random()*7)+"px;border-radius:"+(Math.random()>.5?"50%":"2px")+";animation-delay:"+(Math.random()*.5)+"s;animation-duration:"+(1+Math.random()*.8)+"s;";ct.appendChild(p);setTimeout(()=>p.remove(),2000);}
+  });
+}
+function openSet(){document.getElementById("setModal").classList.add("on");}
+function cSet(e){if(!e||e.target.id==="setModal"||e.target.tagName==="BUTTON")document.getElementById("setModal").classList.remove("on");}
+document.getElementById("rngSpd").addEventListener("input",function(){rate=parseFloat(this.value);document.getElementById("lblSpd").textContent=this.value+"x";});
+document.getElementById("rngFnt").addEventListener("input",function(){const fs=parseInt(this.value);document.getElementById("lblFnt").textContent=fs+"px";document.querySelectorAll(".pl").forEach(el=>el.style.fontSize=fs+"px");});
+const SK1="mm_cp",SK2="mm_cr";
+function ldCP(){try{return JSON.parse(localStorage.getItem(SK1)||"[]");}catch{return[];}}
+function svCP(a){localStorage.setItem(SK1,JSON.stringify(a));}
+function ldCR(){try{return JSON.parse(localStorage.getItem(SK2)||"[]");}catch{return[];}}
+function svCR(a){localStorage.setItem(SK2,JSON.stringify(a));}
+function mergeC(){ldCP().forEach(c=>{if(!pictos.find(p=>p.id===c.id))pictos.push(c);});ldCR().forEach(c=>{if(!phrases.find(p=>p._id===c._id))phrases.push(c);});}
+const EMSET=["\uD83D\uDE0A","\uD83D\uDE22","\uD83D\uDE21","\uD83D\uDE28","\uD83E\uDD17","\uD83D\uDE34","\uD83E\uDD29","\uD83D\uDE0C","\uD83C\uDF7D\uFE0F","\uD83D\uDCA7","\uD83D\uDEBD","\uD83C\uDE98","\uD83E\uDD12","\uD83C\uDFAE","\u270B","\uD83D\uDC4D","\uD83D\uDC4E","\uD83D\uDC4B","\uD83C\uDFC3","\uD83D\uDC42","\uD83E\uDD32","\uD83E\uDDF8","\uD83D\uDCF1","\uD83D\uDCDA","\uD83C\uDFA8","\uD83D\uDE97","\u26BD","\uD83C\uDFB5","\uD83E\uDDE9","\u270F\uFE0F","\uD83C\uDF81","\uD83C\uDFC6","\uD83C\uDF4E","\uD83C\uDF4C","\uD83C\uDF4A","\uD83C\uDF53","\uD83C\uDF47","\uD83E\uDD55","\uD83C\uDF55","\uD83C\uDF5E","\uD83E\uDD5B","\uD83C\uDF6B","\uD83C\uDF66","\uD83C\uDF6A","\uD83E\uDD5A","\uD83C\uDF5D","\uD83E\uDD69","\uD83C\uDF57","\uD83E\uDD57","\uD83C\uDF70","\uD83D\uDC36","\uD83D\uDC31","\uD83D\uDC30","\uD83E\uDD81","\uD83D\uDC18","\uD83E\uDD8B","\uD83D\uDC26","\uD83D\uDC22","\uD83D\uDC38","\uD83E\uDD8A","\uD83D\uDC3B","\uD83D\uDC3C","\uD83D\uDC27","\uD83E\uDD92","\u2764\uFE0F","\u2B50","\uD83C\uDF1F","\uD83C\uDF08","\uD83C\uDF38","\uD83C\uDF33","\uD83C\uDF0A","\u2600\uFE0F","\uD83C\uDF19","\u23F0","\uD83C\uDFE0","\uD83C\uDFEB","\uD83C\uDFE5","\uD83C\uDF3F","\uD83C\uDF0D","\uD83D\uDE80","\uD83D\uDCA1","\uD83C\uDFAF","\uD83C\uDF93"];
+function bldEP(cid,onSel){const c=document.getElementById(cid);c.innerHTML="";EMSET.forEach(em=>{const btn=document.createElement("button");btn.className="epb";btn.textContent=em;btn.onclick=()=>{onSel(em);c.style.display="none";};c.appendChild(btn);});}
+function tEP(){const p=document.getElementById("epPick");const o=p.style.display==="flex";p.style.display=o?"none":"flex";if(!o)bldEP("epPick",em=>{selEm=em;document.getElementById("epPrev").textContent=em;});}
+function tFEP(){const p=document.getElementById("fePick");const o=p.style.display==="flex";p.style.display=o?"none":"flex";if(!o)bldEP("fePick",em=>{selFEm=em;document.getElementById("fePrev").textContent=em;});}
+function sCat(btn){document.querySelectorAll(".csel").forEach(b=>b.classList.remove("on"));btn.classList.add("on");selCat=btn.getAttribute("data-c");}
+function sgTab(t,btn){document.querySelectorAll("#panGestion .tab").forEach(b=>b.classList.remove("active"));btn.classList.add("active");document.getElementById("gFormP").style.display=t==="p"?"block":"none";document.getElementById("gFormF").style.display=t==="f"?"block":"none";}
+function svPicto(){
+  const lbl=document.getElementById("pLabel").value.trim();if(!lbl){alert("Label obligatoire !");return;}
+  const ph=document.getElementById("pPhone").value.trim()||lbl,spk=document.getElementById("pSpeak").value.trim()||lbl;
+  const cp=ldCP();
+  if(ePictoId!==null){
+    const ix=cp.findIndex(c=>c.id===ePictoId);if(ix!==-1)cp[ix]={...cp[ix],emoji:selEm,label:lbl,ph,spk,cat:selCat};
+    const pi=pictos.findIndex(p=>p.id===ePictoId);if(pi!==-1)Object.assign(pictos[pi],{emoji:selEm,label:lbl,ph,spk,cat:selCat});
+    ePictoId=null;
+  }else{const nid=Date.now();const np={id:nid,emoji:selEm,label:lbl,ph,spk,cat:selCat,custom:true};cp.push(np);pictos.push(np);}
+  svCP(cp);clrPF();renderGrid();renderCLists();showToast("Pictogramme enregistre !");
+}
+function clrPF(){document.getElementById("pLabel").value="";document.getElementById("pPhone").value="";document.getElementById("pSpeak").value="";selEm="\uD83D\uDE0A";document.getElementById("epPrev").textContent="\uD83D\uDE0A";ePictoId=null;document.getElementById("pfTitle").textContent="+ Nouveau pictogramme";document.getElementById("cnclPBtn").style.display="none";document.querySelectorAll(".csel").forEach((b,i)=>b.classList.toggle("on",i===0));selCat="besoin";}
+function cnclP(){clrPF();}
+function edPicto(id){
+  const item=ldCP().find(c=>c.id===id);if(!item)return;
+  ePictoId=id;selEm=item.emoji;document.getElementById("epPrev").textContent=item.emoji;
+  document.getElementById("pLabel").value=item.label;document.getElementById("pPhone").value=item.ph||"";document.getElementById("pSpeak").value=item.spk||"";
+  document.querySelectorAll(".csel").forEach(b=>b.classList.toggle("on",b.getAttribute("data-c")===item.cat));selCat=item.cat;
+  document.getElementById("pfTitle").textContent="Modifier";document.getElementById("cnclPBtn").style.display="block";
+  document.getElementById("gFormP").scrollIntoView({behavior:"smooth"});
+}
+function dlPicto(id){
+  if(!confirm("Supprimer ?"))return;
+  svCP(ldCP().filter(x=>x.id!==id));
+  const pi=pictos.findIndex(p=>p.id===id);if(pi!==-1)pictos.splice(pi,1);
+  renderGrid();renderCLists();showToast("Supprime");
+}
+function svPhrase(){
+  const txt=document.getElementById("fText").value.trim();if(!txt){alert("Phrase obligatoire !");return;}
+  const cat=document.getElementById("fCat").value.trim()||"Perso";
+  const cr=ldCR();
+  if(ePhrId!==null){
+    const ix=cr.findIndex(c=>c._id===ePhrId);if(ix!==-1)cr[ix]={...cr[ix],emoji:selFEm,text:txt,cat};
+    const qi=phrases.findIndex(p=>p._id===ePhrId);if(qi!==-1)Object.assign(phrases[qi],{emoji:selFEm,text:txt,cat});
+    ePhrId=null;
+  }else{const _id=Date.now();const np={_id,emoji:selFEm,text:txt,cat,custom:true};cr.push(np);phrases.push(np);}
+  svCR(cr);clrFF();renderPhrases();renderCLists();showToast("Phrase enregistree !");
+}
+function clrFF(){document.getElementById("fText").value="";document.getElementById("fCat").value="";selFEm="\uD83D\uDCAC";document.getElementById("fePrev").textContent="\uD83D\uDCAC";ePhrId=null;document.getElementById("ffTitle").textContent="+ Nouvelle phrase";document.getElementById("cnclFBtn").style.display="none";}
+function cnclF(){clrFF();}
+function edPhrase(id){
+  const item=ldCR().find(c=>c._id===id);if(!item)return;
+  ePhrId=id;selFEm=item.emoji;document.getElementById("fePrev").textContent=item.emoji;
+  document.getElementById("fText").value=item.text;document.getElementById("fCat").value=item.cat||"";
+  document.getElementById("ffTitle").textContent="Modifier";document.getElementById("cnclFBtn").style.display="block";
+}
+function dlPhrase(id){
+  if(!confirm("Supprimer ?"))return;
+  svCR(ldCR().filter(x=>x._id!==id));
+  const qi=phrases.findIndex(p=>p._id===id);if(qi!==-1)phrases.splice(qi,1);
+  renderPhrases();renderCLists();showToast("Supprime");
+}
+function renderCLists(){
+  const cl=ldCP(),pl=document.getElementById("cpList");
+  pl.innerHTML="";
+  if(!cl.length){pl.innerHTML="<div style=\"text-align:center;padding:18px;color:var(--TL);font-size:12px;font-weight:700;\">Aucun pictogramme ajoute</div>";}
+  else cl.forEach(item=>{const el=document.createElement("div");el.className="citem";el.innerHTML="<div class=\"cie\">"+item.emoji+"</div><div style=\"flex:1;min-width:0;\"><div class=\"cil\">"+item.label+"</div><div class=\"cis\">"+item.cat+" . "+(item.ph||"")+"</div></div><div class=\"ias\"><button class=\"bed\" onclick=\"edPicto("+item.id+")\">&#x270F;&#xFE0F;</button><button class=\"bdl\" onclick=\"dlPicto("+item.id+")\">&#x1F5D1;&#xFE0F;</button></div>";pl.appendChild(el);});
+  const cr=ldCR(),fl=document.getElementById("cfList");
+  fl.innerHTML="";
+  if(!cr.length){fl.innerHTML="<div style=\"text-align:center;padding:18px;color:var(--TL);font-size:12px;font-weight:700;\">Aucune phrase ajoutee</div>";}
+  else cr.forEach(item=>{const el=document.createElement("div");el.className="citem";el.innerHTML="<div class=\"cie\">"+item.emoji+"</div><div style=\"flex:1;min-width:0;\"><div class=\"cil\">"+(item.text.length>28?item.text.substring(0,28)+"...":item.text)+"</div><div class=\"cis\">"+(item.cat||"Perso")+"</div></div><div class=\"ias\"><button class=\"bed\" onclick=\"edPhrase("+item._id+")\">&#x270F;&#xFE0F;</button><button class=\"bdl\" onclick=\"dlPhrase("+item._id+")\">&#x1F5D1;&#xFE0F;</button></div>";fl.appendChild(el);});
+}
+function showToast(msg){
+  let t=document.getElementById("toastEl");
+  if(!t){t=document.createElement("div");t.id="toastEl";t.style.cssText="position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:#2D2D44;color:#fff;padding:9px 20px;border-radius:50px;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;z-index:500;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none;";document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity="1";clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity="0",2200);
+}
+mergeC();renderGrid();renderPhon();renderPhrases();updXP();
+loadFrVoice();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
