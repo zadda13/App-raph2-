@@ -1,0 +1,17 @@
+{
+  "name": "MonMot - Communication pour tous",
+  "short_name": "MonMot",
+  "description": "Application AAC pour enfants autistes non verbaux",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#F0EEFF",
+  "theme_color": "#6C63FF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗣️</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
